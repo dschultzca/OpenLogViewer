@@ -60,6 +60,8 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	private GenericLog decodedLog;
 	private Thread t;
 	private int packetLength; // Track packet length
+	private long startTime;
+	private int lowCountIsBad;
 
 	private String[] coreStatusAFlagNames = {
 		"CS-FuelPumpPrime",
@@ -181,6 +183,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 	 * @param f The file reference to the log file.
 	 */
 	public FreeEMSBin(final File f) {
+		startTime = System.currentTimeMillis();
 		logFile = f;
 		startFound = false;
 		packetBuffer = new short[6000];
@@ -259,6 +262,7 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 							if (checksum(justThePacket)) {
 								if (decodeBasicLogPacket(justThePacket, PAYLOAD_ID_TO_PARSE)) {
 									packetsParsedFully++;
+									lowCountIsBad++;
 								} else {
 									packetLengthWrong++;
 									payloadIDWrong++; // TODO maybe handle various possibilities post valid packet being parsed
@@ -303,9 +307,10 @@ public class FreeEMSBin implements Runnable { // implements runnable to make thi
 
 			System.out.println(NEWLINE + "Thank you for choosing FreeEMS!");
 
-		} catch (IOException e) {
+		} catch (java.lang.Throwable e) {
 			System.out.println(e.getMessage());
 			// TODO Add code to handle or warn of the error
+			System.out.println("Loaded " + lowCountIsBad + " records in " + (System.currentTimeMillis() - startTime) + " millis!");
 		}
 	}
 
