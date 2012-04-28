@@ -127,6 +127,10 @@ public final class OpenLogViewer extends JFrame {
 	private Dimension size;
 	private int containingDevice;
 
+/**
+*	I added this comment, dschultzca
+ */
+
 	public OpenLogViewer() {
 
 		prefFrame = new PropertiesPane(labels.getString(VIEW_MENU_ITEM_SCALE_AND_COLOR_KEY));
